@@ -1,20 +1,25 @@
-import logging, sys
+import logging, sys, prometheus_client
 from config import settings
 from http.server import HTTPServer
 from metrics import Metrics
-from prometheus_client import MetricsHandler
 
+conf = settings().read()
 log = logging.getLogger("logger")
-log.setLevel(settings.get("LOGLEVEL", "INFO"))
+# log.setLevel(settings.get("LOGLEVEL", "INFO"))
+log.setLevel(logging.DEBUG)
 log.addHandler(logging.StreamHandler(sys.stderr))
+prometheus_client.REGISTRY.unregister(prometheus_client.PROCESS_COLLECTOR)
+prometheus_client.REGISTRY.unregister(prometheus_client.PLATFORM_COLLECTOR)
+prometheus_client.REGISTRY.unregister(prometheus_client.GC_COLLECTOR)
 
-class HttpHandler(MetricsHandler):
+
+class HttpHandler(prometheus_client.MetricsHandler):
 
     try:
-        metrics = Metrics()
-    except Exception as e:
+        metrics = Metrics(config=conf['MONITIRIONG_OBJ'])
+    except Exception as err:
         log.error("Metrics initialization failed")
-        raise e
+        raise err
 
     def do_GET(self):
         if self.path == "/metrics":
@@ -24,5 +29,5 @@ class HttpHandler(MetricsHandler):
             self.send_error(404)
 
 if __name__ == "__main__":
-    log.info(f"Starting web server at port {settings.get('WEB_PORT', 8080)}")
-    HTTPServer(("0.0.0.0", settings.get("WEB_PORT", 8080)), HttpHandler).serve_forever()
+    log.info(f"Starting web server at port {conf['EXPORTER_PORT']}")
+    HTTPServer(("0.0.0.0", conf['EXPORTER_PORT']), HttpHandler).serve_forever()

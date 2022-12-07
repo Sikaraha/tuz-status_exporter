@@ -1,0 +1,33 @@
+EXPORTER_PORT: 9171
+MONITORING_OBJ:
+  - domain: 'example.com'
+    username: 'EXAMPLE\user'
+    passwd: 'P@$$w0rd'
+    dc_list:
+      - '192.168.1.2'
+      - '192.168.1.3'
+    host_port: 3267
+    LDAP_Subtree: 'DC=example,DC=com'
+    LDAP_Filter: '(&(objectClass=user)(sAMAccountName=example_user))'
+    reqLDAPattr:
+      - 'userPrinipalName'
+      - 'userAccountControl'
+      - 'lockoutTime'
+      - 'pwdLastSet'
+      - 'description'
+
+  - domain: 'local.com'
+    username: 'LOCAL\user'
+    passwd: 'P@$$w0rd'
+    dc_list:
+      - '192.168.2.2'
+      - '192.168.2.3'
+    host_port: 3267
+    LDAP_Subtree: 'DC=local,DC=com'
+    LDAP_Filter: '(&(objectClass=user)(sAMAccountName=example_user))'
+    reqLDAPattr:
+      - 'userPrinipalName'
+      - 'userAccountControl'
+      - 'lockoutTime'
+      - 'pwdLastSet'
+      - 'description'
