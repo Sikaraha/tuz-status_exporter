@@ -16,7 +16,7 @@ prometheus_client.REGISTRY.unregister(prometheus_client.GC_COLLECTOR)
 class HttpHandler(prometheus_client.MetricsHandler):
 
     try:
-        metrics = Metrics(config=conf['MONITIRIONG_OBJ'])
+        metrics = Metrics(config=conf['MONITORIONG_OBJ'])
     except Exception as err:
         log.error("Metrics initialization failed")
         raise err
